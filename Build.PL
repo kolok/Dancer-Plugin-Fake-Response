@@ -8,6 +8,7 @@ my $build = Module::Build->new (
         dist_abstract => 'Dancer Plugin Fake Response',
         requires => {
             'Test::More'           => 0,
+            'Dancer'               => 1.3002,
             'Dancer::Plugin::REST' => 0.04,
         },
         build_requires => {
