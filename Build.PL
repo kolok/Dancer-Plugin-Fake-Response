@@ -7,8 +7,8 @@ my $build = Module::Build->new (
         dist_version_from => 'lib/Dancer/Plugin/Fake/Response.pm',
         dist_abstract => 'Dancer Plugin Fake Response',
         requires => {
-            'Test::More'                                => 0,
-            'Dancer'                                    => 1.3002,
+            'Test::More'           => 0,
+            'Dancer::Plugin::REST' => 0.04,
         },
         build_requires => {
             'Test::More' => 0,
