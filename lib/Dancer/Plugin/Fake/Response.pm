@@ -5,6 +5,7 @@ use strict;
 
 use Dancer ':syntax';
 use Dancer::Plugin;
+use Dancer::Plugin::REST;
 
 =head1 NAME
 
@@ -32,36 +33,31 @@ in your Dancer project, use this plugin and register  :
 In your config file :
 
     plugins:
-      Fake::Reponse:
+      Fake::Response:
         GET:
-          /rewrite_fake_route/:id.:format:
+          "/rewrite_fake_route/:id.:format":
             response:
               id: 1
               test: "get test"
-            code: 123
-          /rewrite_fake_route2/:id.:format:
+          "/rewrite_fake_route2/:id.:format":
             response:
               id: 2
               test: "get test 2"
-            code: 123
         PUT:
-          /rewrite_fake_route/:id.:format:
+          "/rewrite_fake_route/:id.:format":
             response:
               id: 3
               test: "put test"
-            code: 234
         POST:
-          /rewrite_fake_route/:format:
+          "/rewrite_fake_route/:format":
             response:
               id: 4
               test: "post test"
-            code: 456
         DELETE:
-          /rewrite_fake_route/:id.:format:
+          "/rewrite_fake_route/:id.:format":
             response:
               id: 5
               test: "delete test"
-            code: 456
 
 For each defined route in Dancer plugin config are catched and return data and code configured.
 
@@ -73,6 +69,32 @@ new step :
 * add possibility to return params set like id : :id
 * add possibility to request data store in a file like response_file: file/get_answer.json
 
+=head1 INIT MODULE ROUTE
+
+Each route configured in dancer plugin configuration are declare fakly.
+
+=cut
+
+#get "/rewrite_fake_route/:id.:format" => sub {return halt{value => "KO"};};
+foreach my $route (keys %{plugin_setting->{GET}})
+{
+    get $route => sub {return halt{value => "KO"};};
+}
+
+foreach my $route (keys %{plugin_setting->{POST}})
+{
+    post $route => sub {return halt{value => "KO"};};
+}
+
+foreach my $route (keys %{plugin_setting->{PUT}})
+{
+    put $route => sub {return halt{value => "KO"};};
+}
+
+foreach my $route (keys %{plugin_setting->{DELETE}})
+{
+    del $route => sub {return halt{value => "KO"};};
+}
 
 =head1 SUBROUTINES/METHODS
 
@@ -82,9 +104,15 @@ Before filter for dancer
 
 Catch if route match with configured route to answer fake data.
 
+Codes return are :
+  - 200 for GET
+  - 201 for POST
+  - 202 for PUT
+  - 202 for DELETE
+
 =cut
 
-use Data::Dumper 'Dumper';
+use Data::Dumper;
 register 'catch_fake_exception' => sub {
     before sub {
         my $req = request;
@@ -96,15 +124,16 @@ register 'catch_fake_exception' => sub {
           {
             set serializer => uc($req_params{format}) || 'JSON';
             my $response = plugin_setting->{$req->method()}->{$route}->{response};
-            my $code     = plugin_setting->{$req->method()}->{$route}->{code};
-            status($code);
-            return halt(plugin_setting->{$req->method()}->{$route}->{response});
+            return halt(status_ok($response)) if $req->method() eq 'GET'; #code = 200
+            return halt(status_created($response)) if $req->method() eq 'POST'; #code = 201
+            return halt(status_accepted($response)) if $req->method() eq 'PUT'; #code = 202
+            return halt(status_accepted($response)) if $req->method() eq 'DELETE'; # code = 202
+            return halt(status_not_found( "Method not found" )); # code = 404
           }
         }
     };
 };
 
-register_plugin;
 
 =head1 AUTHOR
 
@@ -165,4 +194,5 @@ See http://dev.perl.org/licenses/ for more information.
 
 =cut
 
+register_plugin;
 1; # End of Dancer::Plugin::Fake::Response

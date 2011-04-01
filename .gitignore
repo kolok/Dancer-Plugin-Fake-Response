@@ -2,6 +2,7 @@ t/example.db
 MANIFEST.bak
 Makefile.old
 Makefile
+t/logs/
 blib/
 pm_to_blib
 Build
