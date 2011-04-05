@@ -13,11 +13,11 @@ Dancer::Plugin::Fake::Response - The great new Dancer::Plugin::Fake::Response!
 
 =head1 VERSION
 
-Version 0.0101
+Version 0.02
 
 =cut
 
-our $VERSION = '0.0101';
+our $VERSION = '0.02';
 
 
 =head1 SYNOPSIS
