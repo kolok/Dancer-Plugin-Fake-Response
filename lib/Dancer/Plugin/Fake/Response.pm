@@ -37,7 +37,7 @@ In your config file :
         GET:
           "/rewrite_fake_route/:id.:format":
             response:
-              id: 1
+              id: ":id"
               test: "get test"
           "/rewrite_fake_route2/:id.:format":
             response:
@@ -46,7 +46,7 @@ In your config file :
         PUT:
           "/rewrite_fake_route/:id.:format":
             response:
-              id: 3
+              id: ":id"
               test: "put test"
         POST:
           "/rewrite_fake_route/:format":
@@ -56,14 +56,16 @@ In your config file :
         DELETE:
           "/rewrite_fake_route/:id.:format":
             response:
-              id: 5
+              id: ":id"
               test: "delete test"
 
 For each defined route in Dancer plugin config are catched and return data and code configured.
 
-For example for : GET http://localhost/rewrite_fake_route/1.json
-return code : 123
-return body : {"id":1,"test":"get test"}
+For example for : GET http://localhost/rewrite_fake_route/12.json
+return code : 200
+return body : {"id":12,"test":"get test"}
+
+In configuation, if you put parameter name with ':' before, it will return value of parameter send.
 
 new step :
 * add possibility to return params set like id : :id
