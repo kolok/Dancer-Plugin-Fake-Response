@@ -116,7 +116,7 @@ Codes return are :
 
 use Data::Dumper;
 register 'catch_fake_exception' => sub {
-    before sub {
+    hook before => sub {
         my $req = request;
         my %req_params = params;
         return if !defined plugin_setting->{$req->method()};
